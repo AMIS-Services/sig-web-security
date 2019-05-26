@@ -17,20 +17,23 @@ See README.md for more details.
 
 The API has the following endpoints of interest:
 
+-   `/management/info` (GET)
 -   `/api/authenticate` (POST)
 -   `/api/account` (GET)
 -   `/api/users` (GET|POST|PUT)
 -   `/api/users/{login}` (GET|DELETE)
--   `/api/authorities` (GET)
+-   `/api/users/authorities` (GET)
 
-Try getting all users from the backend using Postman. Do you get a `401 Unauthorized` response?
-This response indicates that you are not authenticated and therefore not allowed to get this resource.
+Try getting the management-info from the backend using Postman. Do you get a `200 OK` response? The returned json contains some properties that are used by the client application to render in a certain way.
+
+Try getting the account from the backend using Postman. Yes, this is an illogical request; nobody knows what account to return. Do you get a `401 Unauthorized` response?
+This response indicates that the resource is protected and you are not authenticated - and therefore not allowed to see it.
 
 Try authenticating with the default user `user` identified by `user`. The authenticate resource accepts a simple JSON object with fields "username" and "password". Do you get an `id_token`?
 
-The token you received is a so-called Json Web Token (JWT) and is send with requests to authenticate the request. In Postman you can send this token with requests by pasting it in the field under Authorization > type Bearer Token. Try getting all users again. Do you get the users `system`, `admin` and `user`?
+The token you received is a so-called Json Web Token (JWT) and is send with requests to authenticate the request. In Postman you can send this token with requests by pasting it in the field under Authorization > type Bearer Token. Try getting the account again. Do you get detail information of `user`?
 
-Try getting all authorities. Do you get a `403 Forbidden` response?
+Try getting all users. Do you get a `403 Forbidden` response?
 This response indicates that you are authenticated, but not authorized (and therefore not allowed) to get this resource.
 
 You may try getting the authorities again with a JWT obtained by authenticating with the default admin user `admin`. This user is authorized to get all authorities.
@@ -42,6 +45,16 @@ See `/backend/src/resources/config/application-dev.yml` for the backend configur
 
 The expiration date of the token is in epoch format (see https://www.epochconverter.com/ for a converter). Try changing the expiration date to the past, to generate an expired token. Then try getting all users with this token. Do you get a `401 Unauthorized` response?
 
-Simlarly you could change the authorities of the token. Note that getting all users requires you to be authenticated (that is, a valid token), while getting all authorities requires the role `ROLE_ADMIN`.
+Simlarly you could change the authorities of the token. Note that getting all users requires the role `ROLE_ADMIN`.
 
 The account resource returns all relevant information of the currently authenticated user. Try retrieving the account information for the system user `system`. Note that its password is not `system`!
+
+### Step 3: obtaining and storing the JWT
+
+### Step 4: using the JWT in requests
+
+#### Bonus: handling expiration
+
+### Step 5: protecting routes
+
+### Step 6: dynamic rendering
