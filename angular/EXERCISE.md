@@ -51,10 +51,21 @@ The account resource returns all relevant information of the currently authentic
 
 ### Step 3: obtaining and storing the JWT
 
+// implement auth-jwt.service.ts // login.service.ts
+
 ### Step 4: using the JWT in requests
+
+// create the equivalent of auth.interceptor.ts
 
 #### Bonus: handling expiration
 
-### Step 5: protecting routes
+// create the equivalent of auth-expired.interceptor.ts
 
-### Step 6: dynamic rendering
+### Step 5: dynamic rendering
+
+// implement account.service.ts
+// only render the Administration option if the user has the role `ROLE_ADMIN`
+
+### Step 6: protecting routes
+
+// navigation to the Administration pages is blocked if the user does not have the role `ROLE_ADMIN`

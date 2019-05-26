@@ -55,7 +55,6 @@ The account resource returns all relevant information of the currently authentic
 
 #### Bonus: handling expiration
 
-### Step 5: protecting routes
+### Step 5: dynamic rendering
 
-### Step 6: dynamic rendering
-
+### Step 6: protecting routes
