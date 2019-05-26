@@ -1,0 +1,27 @@
+{
+  "generator-jhipster": {
+    "promptValues": {
+      "nativeLanguage": "nl"
+    },
+    "jhipsterVersion": "5.8.2",
+    "applicationType": "monolith",
+    "baseName": "webSecurity",
+    "clientFramework": "react",
+    "useSass": true,
+    "clientPackageManager": "npm",
+    "authenticationType": "jwt",
+    "cacheProvider": "no",
+    "databaseType": "h2",
+    "devDatabaseType": "h2",
+    "prodDatabaseType": "h2",
+    "testFrameworks": [],
+    "jhiPrefix": "jhi",
+    "entitySuffix": "",
+    "dtoSuffix": "DTO",
+    "otherModules": [],
+    "enableTranslation": true,
+    "nativeLanguage": "nl",
+    "languages": ["nl"],
+    "skipServer": true
+  }
+}
