@@ -9,7 +9,7 @@ module.exports = {
 
 // Returns a static version number when server is skipped
 function parseVersion() {
-    return '0.0.1-SNAPSHOT';
+    return '';
 };
 
 const _root = path.resolve(__dirname, '..');
