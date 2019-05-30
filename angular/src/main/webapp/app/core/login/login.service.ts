@@ -27,10 +27,6 @@ export class LoginService {
         });
     }
 
-    loginWithToken(jwt, rememberMe) {
-        return this.authServerProvider.loginWithToken(jwt, rememberMe);
-    }
-
     logout() {
         this.authServerProvider.logout().subscribe();
         this.accountService.authenticate(null);

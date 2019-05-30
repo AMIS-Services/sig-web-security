@@ -28,12 +28,13 @@ export class HasAnyAuthorityDirective {
     set jhiHasAnyAuthority(value: string | string[]) {
         this.authorities = typeof value === 'string' ? [value] : value;
         this.updateView();
-        // Get notified each time authentication state changes.
-        this.accountService.getAuthenticationState().subscribe(identity => this.updateView());
+
+        // subscribe to changes - use this.accountService.getAuthenticationState().subscribe()
     }
 
     private updateView(): void {
-        const hasAnyAuthority = this.accountService.hasAnyAuthority(this.authorities);
+        // use this.accountService.hasAnyAuthority() to determine of the current user has any of the required authorities
+        const hasAnyAuthority = true;
         this.viewContainerRef.clear();
         if (hasAnyAuthority) {
             this.viewContainerRef.createEmbeddedView(this.templateRef);

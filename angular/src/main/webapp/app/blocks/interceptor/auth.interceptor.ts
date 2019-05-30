@@ -14,14 +14,9 @@ export class AuthInterceptor implements HttpInterceptor {
             return next.handle(request);
         }
 
-        const token = this.localStorage.retrieve('authenticationToken') || this.sessionStorage.retrieve('authenticationToken');
-        if (!!token) {
-            request = request.clone({
-                setHeaders: {
-                    Authorization: 'Bearer ' + token
-                }
-            });
-        }
+        // retrieve the JWT from the storage and add it to the header
+        // to change the request, use request = request.clone()
+
         return next.handle(request);
     }
 }

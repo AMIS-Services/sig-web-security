@@ -11,6 +11,8 @@ Run the following commands to start the frontend:
 
 See README.md for more details.
 
+Note: the client application is not used untill Step 3.
+
 ## Hands-on
 
 ### Step 1: examining the API
@@ -51,21 +53,45 @@ The account resource returns all relevant information of the currently authentic
 
 ### Step 3: obtaining and storing the JWT
 
-// implement auth-jwt.service.ts // login.service.ts
+Start the client application if you haven't done so already. Try logging in with user `admin`. If the login fails, it will show the message "Aanmelden mislukt!", otherwise it will just close the login modal.
+Check the Network for requests. It may not record until you opened this screen - if not try logging in again (correctly). Do you see a `200 Ok` response on the authenticate resource? You can check the rest of the response under Headers and Preview. Do you see the JWT?
+
+File `/core/auth/auth-jwt.service.ts` holds the AuthServerProvider class, which does the authenticate request to the backend on line 23. If the request is successful, the authenticateSuccess function is called. Currently this function is empty; nothing is done with the returned JWT. Implement this function to extract the JWT from the return message.
+We want to store the JWT to use this in later requests. Send the JWT to the storeAuthenticationToken function. Implement this function to store the token in either sessionStorage or localStorage (or both). Note that the session and local Storage services are already imported.
+
+#### Bonus: logging out
+
+The AuthServerProvider also has a logout function. Can you implement this function?
 
 ### Step 4: using the JWT in requests
 
-// create the equivalent of auth.interceptor.ts
+In the previous step you stored the JWT after obtaining it from the authenticate resource. Currently this JWT is not used in requests as can be observed by all the `401 Unauthorized` messages in the Console. Of course you could add the JWT to every request manually, but Angular has a better solution; Interceptors.
+
+Interceptors are classes that implement HttpInterceptor and are called (chained) in every request. They have the intercept function that takes a HttpRequest object and a HttpHandler object. The interceptor can do something with the HttpRequest object and then it should call handle(request) on the HttpHandler object to pass the request to the next interceptor.
+
+File `/blocks/interceptor/auth.interceptor.ts` holds the interceptor that should add the JWT to the header. Can you add the JWT to the header? Note that the session and local Storage services are already imported.
 
 #### Bonus: handling expiration
 
-// create the equivalent of auth-expired.interceptor.ts
+File `/blocks/interceptor/auth-expired.interceptor.ts` holds the interceptor that handles expired authentication. What would you do if the authentication is expired?
 
 ### Step 5: dynamic rendering
 
-// implement account.service.ts
-// only render the Administration option if the user has the role `ROLE_ADMIN`
+Log in as user `user` if you haven't already done so. The menu bar shows an Administrator option, which contains a User management option among others. Click this option to go to the user-management screen, which is empty. Check the console for messages. Do you see the 403 Forbidden message? This is caused by a request to get all users, a resource this user is not authorized to! This is not user friendly; it would be better if this option would be unavailable.
+
+File `/layouts/navbar/navbar.component.html` holds the html for the navigation bar. At line 33 you can see the Administrator option, which has a structural directive jhiHasAnyAuthority. This directive accepts an authority (or list of authorities) and dynamically renders the html if the current user has any of those authorities.
+See `/shared/auth/has-any-authority.directive.ts` for the directive. Note that `structural directives` are a special class of directives (prefixed with a \*); they accept a templateRef and a viewContainerRef and can control the rendered html inside the viewContainer. This directive uses `this.viewContainerRef.clear()` to remove the html structure the directive is on. It then adds the html structure with `this.viewContainerRef.createEmbeddedView(this.templateRef)`. Well known directives that do the same are `ngIf` and `ngFor`.
+The directive has an updateView function which determines if the html structure is rendered or not. Currently it always renders the html structure. Implement this functionality.
+In addition the menu bar will be rendered before the user is logged in. Can you refresh the directive after logging in? Hint: use the authenticationState Subject in the AccountService.
 
 ### Step 6: protecting routes
 
-// navigation to the Administration pages is blocked if the user does not have the role `ROLE_ADMIN`
+Log in as user `user` if you haven't already done so. Try navigating to `http://localhost:9000/#/admin/user-management`. You see the same empty user-management screen you saw in Step 5. Even though the Administration option is unavailable, it is still possible to get to the page! This is still not user friendly; it would be better if this URL would be unavailable.
+
+Angular defines its availabel URLs in Route objects. These Route objects have various properties, including a canActivate property. This property must refer to a class that implements the CanActivate interface; it must hava a canActivate function that returns a boolean - specifying whether the Route can be activated or not.
+
+File `/admin/admin.route.ts` holds the Route that contains all Routes under the `/admin` URL. It already has an import of UserRouteAccessService, which implements CanActivate.
+Add the canActivate property to the Route referencing the UserRouteAccessService.
+Add a data property to the Route containing information on the required authorities. This property will be used by the UserRouteAccessService.
+Open the UserRouteAccessService. Notice that the canActivate function always returns true.
+Implement the function. Hint: the function contains several steps you could follow.
