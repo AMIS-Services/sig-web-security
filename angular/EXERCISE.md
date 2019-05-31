@@ -53,11 +53,11 @@ The account resource returns all relevant information of the currently authentic
 
 ### Step 3: obtaining and storing the JWT
 
-Start the client application if you haven't done so already. Try logging in with user `admin`. If the login fails, it will show the message "Aanmelden mislukt!", otherwise it will just close the login modal.
-Check the Network for requests. It may not record until you opened this screen - if not try logging in again (correctly). Do you see a `200 Ok` response on the authenticate resource? You can check the rest of the response under Headers and Preview. Do you see the JWT?
+Start the client application if you haven't done so already. Try logging in with user `admin`. Are you logged in?
+Check the Network for requests. It may not record until you opened this screen - if not try logging in again. Do you see a `200 Ok` response on the authenticate resource? You can check the rest of the response under Headers and Preview. Do you see the JWT?
 
-File `/core/auth/auth-jwt.service.ts` holds the AuthServerProvider class, which does the authenticate request to the backend on line 23. If the request is successful, the authenticateSuccess function is called. Currently this function is empty; nothing is done with the returned JWT. Implement this function to extract the JWT from the return message.
-We want to store the JWT to use this in later requests. Send the JWT to the storeAuthenticationToken function. Implement this function to store the token in either sessionStorage or localStorage (or both). Note that the session and local Storage services are already imported.
+File `/core/auth/auth-jwt.service.ts` holds the AuthServerProvider class, which does the authenticate request to the backend. If the request is successful, the authenticateSuccess function is called. Currently this function is empty; nothing is done with the returned JWT! Implement this function to extract the JWT from the return message.
+Just retrieving the JWT is not enough, you need to store it to use it in later requests. Send the JWT to the storeAuthenticationToken function. Implement this function to store the token in sessionStorage or localStorage. Note that the Angular services for these Stores are already imported. Do you know the difference between these Stores? The sessionStorage is cleared upon closing the browser tab, while the localStorage is kept even when the browser is closed.
 
 #### Bonus: logging out
 
@@ -67,9 +67,11 @@ The AuthServerProvider also has a logout function. Can you implement this functi
 
 In the previous step you stored the JWT after obtaining it from the authenticate resource. Currently this JWT is not used in requests as can be observed by all the `401 Unauthorized` messages in the Console. Of course you could add the JWT to every request manually, but Angular has a better solution; Interceptors.
 
-Interceptors are classes that implement HttpInterceptor and are called (chained) in every request. They have the intercept function that takes a HttpRequest object and a HttpHandler object. The interceptor can do something with the HttpRequest object and then it should call handle(request) on the HttpHandler object to pass the request to the next interceptor.
+Interceptors are classes that implement HttpInterceptor. They have an intercept function that takes a HttpRequest object and a HttpHandler object. This function is called by Angular for every request (and response). The interceptor can do something with the HttpRequest object and then it should call handle(request) on the HttpHandler object to pass the request to the next interceptor.
 
 File `/blocks/interceptor/auth.interceptor.ts` holds the interceptor that should add the JWT to the header. Can you add the JWT to the header? Note that the session and local Storage services are already imported.
+
+Open User management (Administrator > User management). Do you see a table with available users?
 
 #### Bonus: handling expiration
 
@@ -77,18 +79,22 @@ File `/blocks/interceptor/auth-expired.interceptor.ts` holds the interceptor tha
 
 ### Step 5: dynamic rendering
 
-Log in as user `user` if you haven't already done so. The menu bar shows an Administrator option, which contains a User management option among others. Click this option to go to the user-management screen, which is empty. Check the console for messages. Do you see the 403 Forbidden message? This is caused by a request to get all users, a resource this user is not authorized to! This is not user friendly; it would be better if this option would be unavailable.
+Log in as user `user`; this user has less privileges. Open User management again (Administrator > User management). Notice that the table is empty. Open the console. Do you see the 403 Forbidden message? This is caused by a request to get all users, a resource this user is not authorized to! This is not user friendly; it would be better if this option would be unavailable.
 
-File `/layouts/navbar/navbar.component.html` holds the html for the navigation bar. At line 33 you can see the Administrator option, which has a structural directive jhiHasAnyAuthority. This directive accepts an authority (or list of authorities) and dynamically renders the html if the current user has any of those authorities.
-See `/shared/auth/has-any-authority.directive.ts` for the directive. Note that `structural directives` are a special class of directives (prefixed with a \*); they accept a templateRef and a viewContainerRef and can control the rendered html inside the viewContainer. This directive uses `this.viewContainerRef.clear()` to remove the html structure the directive is on. It then adds the html structure with `this.viewContainerRef.createEmbeddedView(this.templateRef)`. Well known directives that do the same are `ngIf` and `ngFor`.
-The directive has an updateView function which determines if the html structure is rendered or not. Currently it always renders the html structure. Implement this functionality.
-In addition the menu bar will be rendered before the user is logged in. Can you refresh the directive after logging in? Hint: use the authenticationState Subject in the AccountService.
+File `/layouts/navbar/navbar.component.html` holds the html for the navigation bar. Find the Administrator option and notice that it has a structural directive: jhiHasAnyAuthority. This directive accepts an authority (or list of authorities) and dynamically renders the html if the current user has any of those authorities.
+
+Note that `strutural directives` are a special class of directives (prefixed with a \*); they accept a templateRef, referencing the html structure the directive is attached to, and a viewContainerRef, referincing the location of the directive in the html template. Well known structural directives such as `ngIf` and `ngFor` can remove the html structure from the template (using `this.viewContainerRef.clear()`) or add/replicate it respectively (using `this.viewContainerRef.createEmbeddedView(this.templateRef)`).
+
+See `/shared/auth/has-any-authority.directive.ts` for the jhiHasAnyAuthority directive. This directive accepts an authority (or list of authorities). It has an updateView function that clears the viewContainerRef and conditionally renders the html structure. Currently it always renders the html structure. Add code to only render the html structure if the current user has any of the required authorities.
+
+Try logging in again. Is the Administrator option removed from the menu bar? Why not? Note that it might be removed from the menu bar. If it is, log out, refresh the screen and try logging in again. Why does it behave like this?
+Angular does not refresh its directives when something in its state changes. You have to instruct the directive to do so. Use the authenticationState Subject in the AccountService as a hook to refresh the directive when the authentication state changes.
 
 ### Step 6: protecting routes
 
 Log in as user `user` if you haven't already done so. Try navigating to `http://localhost:9000/#/admin/user-management`. You see the same empty user-management screen you saw in Step 5. Even though the Administration option is unavailable, it is still possible to get to the page! This is still not user friendly; it would be better if this URL would be unavailable.
 
-Angular defines its availabel URLs in Route objects. These Route objects have various properties, including a canActivate property. This property must refer to a class that implements the CanActivate interface; it must hava a canActivate function that returns a boolean - specifying whether the Route can be activated or not.
+Angular defines its available URLs in Route objects. These Route objects have various properties, including a canActivate property. This property must refer to a class that implements the CanActivate interface. This class has a canActivate function that returns a boolean - specifying whether the Route can be activated or not.
 
 File `/admin/admin.route.ts` holds the Route that contains all Routes under the `/admin` URL. It already has an import of UserRouteAccessService, which implements CanActivate.
 Add the canActivate property to the Route referencing the UserRouteAccessService.
