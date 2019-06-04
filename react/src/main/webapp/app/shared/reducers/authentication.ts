@@ -117,25 +117,13 @@ export const login = (username, password, rememberMe = false) => async (dispatch
     type: ACTION_TYPES.LOGIN,
     payload: axios.post('api/authenticate', { username, password, rememberMe })
   });
-  const bearerToken = result.value.headers.authorization;
-  if (bearerToken && bearerToken.slice(0, 7) === 'Bearer ') {
-    const jwt = bearerToken.slice(7, bearerToken.length);
-    if (rememberMe) {
-      Storage.local.set(AUTH_TOKEN_KEY, jwt);
-    } else {
-      Storage.session.set(AUTH_TOKEN_KEY, jwt);
-    }
-  }
+  // get token from message (header)
+  // store token in Storage
   await dispatch(getSession());
 };
 
 export const clearAuthToken = () => {
-  if (Storage.local.get(AUTH_TOKEN_KEY)) {
-    Storage.local.remove(AUTH_TOKEN_KEY);
-  }
-  if (Storage.session.get(AUTH_TOKEN_KEY)) {
-    Storage.session.remove(AUTH_TOKEN_KEY);
-  }
+  // remove token from Storage
 };
 
 export const logout = () => dispatch => {

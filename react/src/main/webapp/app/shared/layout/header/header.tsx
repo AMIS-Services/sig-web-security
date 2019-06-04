@@ -13,7 +13,6 @@ import { AdminMenu, EntitiesMenu, AccountMenu, LocaleMenu } from './menus';
 
 export interface IHeaderProps {
   isAuthenticated: boolean;
-  isAdmin: boolean;
   ribbonEnv: string;
   isInProduction: boolean;
   isSwaggerEnabled: boolean;
@@ -50,7 +49,7 @@ export default class Header extends React.Component<IHeaderProps, IHeaderState> 
   };
 
   render() {
-    const { currentLocale, isAuthenticated, isAdmin, isSwaggerEnabled, isInProduction } = this.props;
+    const { currentLocale, isAuthenticated, isSwaggerEnabled, isInProduction } = this.props;
 
     /* jhipster-needle-add-element-to-menu - JHipster will add new menu items here */
 
@@ -65,7 +64,7 @@ export default class Header extends React.Component<IHeaderProps, IHeaderState> 
             <Nav id="header-tabs" className="ml-auto" navbar>
               <Home />
               {isAuthenticated && <EntitiesMenu />}
-              {isAuthenticated && isAdmin && <AdminMenu showSwagger={isSwaggerEnabled} />}
+              {isAuthenticated && <AdminMenu showSwagger={isSwaggerEnabled} />}
               <LocaleMenu currentLocale={currentLocale} onClick={this.handleLocaleChange} />
               <AccountMenu isAuthenticated={isAuthenticated} />
             </Nav>

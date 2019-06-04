@@ -11,7 +11,7 @@ Run the following commands to start the frontend:
 
 See README.md for more details.
 
-Note: the client application is not used untill Step 3.
+Note: the client application is not used until Step 3.
 
 ## Hands-on
 
@@ -47,7 +47,7 @@ See `/backend/src/resources/config/application-dev.yml` for the backend configur
 
 The expiration date of the token is in epoch format (see https://www.epochconverter.com/ for a converter). Try changing the expiration date to the past, to generate an expired token. Then try getting all users with this token. Do you get a `401 Unauthorized` response?
 
-Simlarly you could change the authorities of the token. Note that getting all users requires the role `ROLE_ADMIN`.
+Similarly you could change the authorities of the token. Note that getting all users requires the role `ROLE_ADMIN`.
 
 The account resource returns all relevant information of the currently authenticated user. Try retrieving the account information for the system user `system`. Note that its password is not `system`!
 
@@ -83,7 +83,7 @@ Log in as user `user`; this user has less privileges. Open User management again
 
 File `/layouts/navbar/navbar.component.html` holds the html for the navigation bar. Find the Administrator option and notice that it has a structural directive: jhiHasAnyAuthority. This directive accepts an authority (or list of authorities) and dynamically renders the html if the current user has any of those authorities.
 
-Note that `strutural directives` are a special class of directives (prefixed with a \*); they accept a templateRef, referencing the html structure the directive is attached to, and a viewContainerRef, referincing the location of the directive in the html template. Well known structural directives such as `ngIf` and `ngFor` can remove the html structure from the template (using `this.viewContainerRef.clear()`) or add/replicate it respectively (using `this.viewContainerRef.createEmbeddedView(this.templateRef)`).
+Note that `structural directives` are a special class of directives (prefixed with a \*); they accept a templateRef, referencing the html structure the directive is attached to, and a viewContainerRef, referencing the location of the directive in the html template. Well known structural directives such as `ngIf` and `ngFor` can remove the html structure from the template (using `this.viewContainerRef.clear()`) or add/replicate it respectively (using `this.viewContainerRef.createEmbeddedView(this.templateRef)`).
 
 See `/shared/auth/has-any-authority.directive.ts` for the jhiHasAnyAuthority directive. This directive accepts an authority (or list of authorities). It has an updateView function that clears the viewContainerRef and conditionally renders the html structure. Currently it always renders the html structure. Add code to only render the html structure if the current user has any of the required authorities.
 

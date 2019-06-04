@@ -39,7 +39,6 @@ export class App extends React.Component<IAppProps> {
           <ErrorBoundary>
             <Header
               isAuthenticated={this.props.isAuthenticated}
-              isAdmin={this.props.isAdmin}
               currentLocale={this.props.currentLocale}
               onLocaleChange={this.props.setLocale}
               ribbonEnv={this.props.ribbonEnv}
@@ -64,7 +63,6 @@ export class App extends React.Component<IAppProps> {
 const mapStateToProps = ({ authentication, applicationProfile, locale }: IRootState) => ({
   currentLocale: locale.currentLocale,
   isAuthenticated: authentication.isAuthenticated,
-  isAdmin: hasAnyAuthority(authentication.account.authorities, [AUTHORITIES.ADMIN]),
   ribbonEnv: applicationProfile.ribbonEnv,
   isInProduction: applicationProfile.inProduction,
   isSwaggerEnabled: applicationProfile.isSwaggerEnabled

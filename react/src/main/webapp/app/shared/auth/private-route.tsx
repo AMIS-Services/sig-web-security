@@ -36,17 +36,10 @@ export const PrivateRouteComponent = ({
     if (!sessionHasBeenFetched) {
       return <div />;
     } else {
-      return isAuthenticated ? (
-        checkAuthorities(props)
-      ) : (
-        <Redirect
-          to={{
-            pathname: '/login',
-            search: props.location.search,
-            state: { from: props.location }
-          }}
-        />
-      );
+        // check if the user is logged in
+        // check if the user has the required authorities (use checkAuthorities)
+        // BONUS: if not, show the login form (use this.loginModalService)
+        return <div />;
     }
   };
 
